@@ -13,6 +13,7 @@ set(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 # Project options
 option(BUILD_PYTHON_INTERFACE "Build the python bindings" ON)
 option(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
+option(MULTICONTACT_API_WITH_PINOCCHIO_SUPPORT "Build with pinocchio support" ON)
 option(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
 
 # Project configuration
@@ -88,6 +89,11 @@ target_include_directories(${PROJECT_NAME}
                            INTERFACE $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME} INTERFACE pinocchio::pinocchio
                                                 ndcurves::ndcurves)
+
+if(MULTICONTACT_API_WITH_PINOCCHIO_SUPPORT)
+    target_compile_definitions(${PROJECT_NAME}
+                               INTERFACE MULTICONTACT_API_WITH_PINOCCHIO_SUPPORT)
+endif(MULTICONTACT_API_WITH_PINOCCHIO_SUPPORT)
 
 if(NOT INSTALL_PYTHON_INTERFACE_ONLY)
   install(

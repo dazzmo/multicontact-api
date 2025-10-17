@@ -9,6 +9,18 @@
 #include <pinocchio/spatial/force.hpp>
 #include <pinocchio/spatial/se3.hpp>
 
+#ifdef MULTICONTACT_API_WITH_PINOCCHIO_SUPPORT
+#include <pinocchio/config.hpp>
+#if PINOCCHIO_VERSION_AT_LEAST(2, 6, 0)
+#define MULTICONTACT_API_WITH_PINOCCHIO_260
+#endif
+#endif
+
+#ifdef MULTICONTACT_API_WITH_PINOCCHIO_260
+#include <pinocchio/serialization/se3.hpp>
+#include <pinocchio/serialization/force.hpp>
+#else
+
 namespace boost {
 
 namespace serialization {
@@ -56,5 +68,9 @@ void serialize(Archive& ar, pinocchio::ForceTpl<_Scalar, _Options>& f,
 }  // namespace serialization
 
 }  // namespace boost
+
+#endif
+
+#undef MULTICONTACT_API_WITH_PINOCCHIO_260
 
 #endif  // ifndef __multicontact_api_serialization_spatial_hpp__

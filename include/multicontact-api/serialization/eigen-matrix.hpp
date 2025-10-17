@@ -28,6 +28,17 @@
 #ifndef EIGEN_BOOST_SERIALIZATION
 #define EIGEN_BOOST_SERIALIZATION
 
+#ifdef MULTICONTACT_API_WITH_PINOCCHIO_SUPPORT
+#include <pinocchio/config.hpp>
+#if PINOCCHIO_VERSION_AT_LEAST(2, 6, 0)
+#define MULTICONTACT_API_WITH_PINOCCHIO_260
+#endif
+#endif
+
+#ifdef MULTICONTACT_API_WITH_PINOCCHIO_260
+#include <pinocchio/serialization/eigen.hpp>
+#else
+
 #include <Eigen/Dense>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/vector.hpp>
@@ -76,5 +87,9 @@ void serialize(
 
 }  // namespace serialization
 }  // namespace boost
+
+#endif
+
+#undef MULTICONTACT_API_WITH_PINOCCHIO_260
 
 #endif  // ifndef __multicontact_api_serialization_eigen_matrix_hpp__
