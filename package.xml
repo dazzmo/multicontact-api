@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>multicontact_api</name>
-  <version>4.0.0</version>
+  <version>4.1.0</version>
   <description>
     API to define and store Contact phases and Contact Sequences.
   </description>
@@ -26,6 +26,7 @@
   <depend>graphviz</depend>
   <depend>pinocchio</depend>
   <depend>ndcurves</depend>
+  <depend>jrl_cmakemodules</depend>
 
   <export>
     <build_type>cmake</build_type>

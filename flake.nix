@@ -2,7 +2,7 @@
   description = "API to define and store Contact phases and Contact Sequences.";
 
   inputs = {
-    gepetto.url = "github:Gepetto/nix/main";
+    gepetto.url = "github:gepetto/nix";
     flake-parts.follows = "gepetto/flake-parts";
     nixpkgs.follows = "gepetto/nixpkgs";
     nix-ros-overlay.follows = "gepetto/nix-ros-overlay";
@@ -12,41 +12,37 @@
 
   outputs =
     inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = import inputs.systems;
-      imports = [ inputs.gepetto.flakeModule ];
-      perSystem =
-        {
-          lib,
-          pkgs,
-          self',
-          ...
-        }:
-        let
-          my-src = lib.fileset.toSource {
-            root = ./.;
-            fileset = lib.fileset.unions [
-              ./bindings
-              ./include
-              ./notebooks
-              ./unittest
-              ./CMakeLists.txt
-              ./package.xml
-            ];
-          };
-        in
-        {
-          packages = {
-            default = self'.packages.py-multicontact-api;
-            multicontact-api = pkgs.multicontact-api.overrideAttrs {
-              src = my-src;
-              patches = [ ]; # No patch for now
-            };
-            py-multicontact-api = pkgs.python3Packages.multicontact-api.overrideAttrs {
-              src = my-src;
-              patches = [ ]; # No patch for now
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } (
+      { lib, self, ... }:
+      {
+        systems = import inputs.systems;
+        imports = [
+          inputs.gepetto.flakeModule
+          { gepetto-pkgs.overlays = [ self.overlays.default ]; }
+        ];
+        flake.overlays.default = _final: prev: {
+          multicontact-api = prev.multicontact-api.overrideAttrs {
+            src = lib.fileset.toSource {
+              root = ./.;
+              fileset = lib.fileset.unions [
+                ./bindings
+                ./include
+                ./notebooks
+                ./unittest
+                ./CMakeLists.txt
+                ./package.xml
+              ];
             };
           };
         };
-    };
+        perSystem =
+          { pkgs, self', ... }:
+          {
+            packages = {
+              default = self'.packages.multicontact-api;
+              multicontact-api = pkgs.python3Packages.multicontact-api.override { standalone = false; };
+            };
+          };
+      }
+    );
 }
